@@ -1,6 +1,6 @@
 # lovstudio:maintain-partners
 
-![Version](https://img.shields.io/badge/version-0.2.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.3.0-CC785C)
 
 Maintain the LovStudio website's "Trusted By" partners section: scrape brand
 logos, normalize to the 80px canvas, append entries with i18n taglines across
