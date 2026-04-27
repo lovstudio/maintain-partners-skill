@@ -1,13 +1,18 @@
 ---
 name: lovstudio:maintain-partners
 description: >
-  Maintain the LovStudio website's partners section: scrape brand logos from
-  homepages, normalize to the 80px-tall canvas, replace existing logos with
-  user-provided files, append new partners to the PARTNERS array with i18n
-  taglines across zh-CN/en/ja/th, and audit the section for dead URLs / missing
-  files / missing translations. Trigger when the user mentions "合作伙伴",
+  Maintain the LovStudio website's partners section AND align partner logo
+  rows on event posters / hero strips: scrape brand logos from homepages,
+  normalize to a 80px-tall canvas, rasterize SVGs via rsvg-convert before
+  normalizing (so SVG viewBox padding gets cropped), replace existing logos
+  with user-provided files, append new partners to the PARTNERS array with
+  i18n taglines across zh-CN/en/ja/th, and audit the section for dead URLs /
+  missing files / missing translations. Also handles cross-asset visual
+  height parity (multi-logo strips on dark backgrounds, "logo 不等高",
+  unified-color filter recipe). Trigger when the user mentions "合作伙伴",
   "partners", "trusted by", "新增 logo", "标准化 logo", "替换 logo",
-  "审计合作伙伴", "维护合作伙伴".
+  "审计合作伙伴", "维护合作伙伴", "logo 不一样高", "logo 对齐", "logo 大小不一致",
+  "logo 颜色不统一".
 license: MIT
 compatibility: >
   Requires Python 3.8+ with Pillow (`pip install Pillow --break-system-packages`).
@@ -15,7 +20,7 @@ compatibility: >
   Tested on macOS; Linux should work.
 metadata:
   author: lovstudio
-  version: "0.1.0"
+  version: "0.2.0"
   tags: [lovstudio, web, branding, i18n]
 ---
 
@@ -104,6 +109,72 @@ python3 ~/.claude/skills/lovstudio-maintain-partners/scripts/audit_partners.py
 ```
 
 Reports: missing logo files, missing i18n keys per locale, dead URLs.
+
+### Op 5: Align a row of partner logos (cross-asset visual height parity)
+
+**When**: putting 3+ partner logos in a single horizontal strip and they look
+different sizes despite having the same CSS `height`. Common in event posters,
+hero sections, "联办 / co-host" rows.
+
+**Root cause**: each source file has different internal padding (designer
+canvas margin), so two PNGs both set to `height: 24px` render at different
+*visible* heights because their content occupies different fractions of the
+canvas. Per-logo CSS height tweaks based on eyeballed content ratios are
+unstable—different displays / scaling will diverge again.
+
+**Reliable fix — trim at file level, uniform CSS height**:
+
+1. **Normalize every logo** to identical content height (default 80px, content
+   bbox tightly cropped). Use `--invert off` if the source is already light-on-
+   transparent (don't double-invert):
+   ```bash
+   for f in lujiazui juanyi citic-bookstore citic-thinker-lab; do
+     python3 ~/.claude/skills/lovstudio-maintain-partners/scripts/normalize_logo.py \
+       --src ~/lovstudio/partners/<brand>/<file>.png \
+       --dst <event-assets>/partners/$f.png \
+       --height 80 --invert auto
+   done
+   ```
+
+2. **For SVG sources, rasterize first**. `normalize_logo.py` operates on
+   raster pixels and **cannot crop SVG viewBox padding**. Without this step
+   an SVG always renders smaller than rasterized PNG siblings:
+   ```bash
+   rsvg-convert -h 240 brand.svg -o /tmp/brand-raw.png
+   python3 ~/.claude/skills/lovstudio-maintain-partners/scripts/normalize_logo.py \
+     --src /tmp/brand-raw.png --dst <event-assets>/partners/brand.png \
+     --height 80 --invert off
+   ```
+   `rsvg-convert` ships with `librsvg` (`brew install librsvg`).
+
+3. **Wrap each logo in an equal-size box, set uniform CSS height**:
+   ```html
+   <span class="ps-logo-box"><img src="..." class="ps-logo"></span>
+   ```
+   ```css
+   .ps-logo-box { display: inline-flex; align-items: center; height: 24px; }
+   .ps-logo { height: 100%; width: auto; display: block; }
+   ```
+
+4. **Dark-background unification** — when the row sits on a dark canvas
+   (e.g. event poster), most brand logos are designed for white BG and look
+   inconsistent (some have black text, some have brand-colored marks). The
+   stable recipe:
+   ```css
+   .ps-logo { filter: brightness(0) invert(1) opacity(0.88); }
+   /* logos already white-on-transparent — opt out of inversion */
+   .ps-logo.ps-logo-original { filter: opacity(0.88); }
+   ```
+   `brightness(0)` flattens all colors to black, then `invert(1)` produces
+   uniform white at the configured opacity. The `.ps-logo-original` escape
+   hatch is for source files that are already white-on-transparent (white
+   SVG variants from a brand kit) so you don't double-process them into
+   invisible black-on-dark.
+
+5. **Anti-pattern — do not** try to fix alignment by setting per-logo
+   heights like `.ps-logo-juanyi { height: 26px }`. It's brittle (every new
+   logo needs another magic number), unstable across browsers, and breaks
+   the moment a designer reships the source asset with different padding.
 
 ## CLI Reference
 
