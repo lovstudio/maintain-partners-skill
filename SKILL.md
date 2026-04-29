@@ -1,5 +1,5 @@
 ---
-name: lovstudio:maintain-partners
+name: lovstudio-maintain-partners
 description: >
   Maintain the LovStudio website's partners section AND align partner logo
   rows on event posters / hero strips: scrape brand logos from homepages,
