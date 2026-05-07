@@ -31,7 +31,7 @@ depends_on:
   - lovstudio-find-logo
 metadata:
   author: lovstudio
-  version: "0.9.0"
+  version: "0.9.1"
   tags: [lovstudio, web, branding, i18n]
 ---
 
@@ -50,7 +50,8 @@ Partner[]` array; older sites may still keep it in
 Before touching files, resolve:
 
 ```bash
-SKILL_DIR="${SKILL_DIR:-$HOME/.claude/skills/lovstudio-maintain-partners}"
+SKILL_ROOT="${LOVSTUDIO_SKILLS_INSTALL_DIR:?Set LOVSTUDIO_SKILLS_INSTALL_DIR}"
+SKILL_DIR="${SKILL_DIR:-$SKILL_ROOT/lovstudio-maintain-partners}"
 WEB_ROOT="${LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT:?Set this or pass --repo}"
 PARTNERS_TSX="${LOVSTUDIO_MAINTAIN_PARTNERS_FILE:-app/(main)/(home)/PartnersGrid.tsx}"
 ```
@@ -113,7 +114,7 @@ For details and supported profile keys, read `references/user-config.md`.
 1. Ask the user for the brand name + homepage URL via `AskUserQuestion`.
 2. Collect the logo with `lovstudio-find-logo`:
    ```bash
-   python3 ~/.claude/skills/lovstudio-find-logo/scripts/find_logo.py \
+   python3 "$SKILL_ROOT/lovstudio-find-logo/scripts/find_logo.py" \
      --name "<显示名>" --url <URL> --slug <slug> --json
    ```
    Use the archived primary asset under
@@ -346,7 +347,8 @@ export https_proxy=http://127.0.0.1:7890 \
 ## Dependencies
 
 ```bash
-git clone https://github.com/lovstudio/find-logo-skill ~/.claude/skills/lovstudio-find-logo
-pip install Pillow --break-system-packages
+git clone https://github.com/lovstudio/find-logo-skill \
+  "${LOVSTUDIO_SKILLS_INSTALL_DIR:?Set LOVSTUDIO_SKILLS_INSTALL_DIR}/lovstudio-find-logo"
+python3 -m pip install Pillow
 brew install librsvg  # for SVG logo sources
 ```

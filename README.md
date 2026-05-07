@@ -1,6 +1,6 @@
 # lovstudio:maintain-partners
 
-![Version](https://img.shields.io/badge/version-0.9.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.9.1-CC785C)
 
 Maintain the LovStudio website's "Trusted By" partners section: collect brand
 logos through `lovstudio-find-logo`, normalize to the 80px canvas, append
@@ -12,9 +12,10 @@ Part of [lovstudio skills](https://github.com/lovstudio/skills) — by [lovstudi
 ## Install
 
 ```bash
-git clone https://github.com/lovstudio/maintain-partners-skill "${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}/lovstudio-maintain-partners"
-git clone https://github.com/lovstudio/find-logo-skill "${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}/lovstudio-find-logo"
-pip install Pillow --break-system-packages
+SKILLS_DIR="${LOVSTUDIO_SKILLS_INSTALL_DIR:?Set LOVSTUDIO_SKILLS_INSTALL_DIR}"
+git clone https://github.com/lovstudio/maintain-partners-skill "$SKILLS_DIR/lovstudio-maintain-partners"
+git clone https://github.com/lovstudio/find-logo-skill "$SKILLS_DIR/lovstudio-find-logo"
+python3 -m pip install Pillow
 brew install librsvg  # for SVG logo sources
 ```
 
@@ -79,7 +80,7 @@ audit_partners.py   Walk PARTNERS; report missing logos / i18n keys / dead URLs
 
 ```bash
 # Collect a logo through the required find-logo skill
-SKILL_ROOT="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
+SKILL_ROOT="${LOVSTUDIO_SKILLS_INSTALL_DIR:?Set LOVSTUDIO_SKILLS_INSTALL_DIR}"
 WEB_ROOT="${LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT:?Set this or pass --repo}"
 PARTNERS_TSX="${LOVSTUDIO_MAINTAIN_PARTNERS_FILE:-app/(main)/(home)/PartnersGrid.tsx}"
 

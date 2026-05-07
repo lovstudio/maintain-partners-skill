@@ -3,6 +3,14 @@
 All notable changes to this skill are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · Versioning: [SemVer](https://semver.org/)
 
+## [0.9.1] - 2026-05-07
+
+### Fixed
+
+- make dependency install paths configurable
+- replace fixed runtime skill paths with LOVSTUDIO_SKILLS_INSTALL_DIR
+- use python3 -m pip install Pillow in dependency examples
+
 ## [0.9.0] - 2026-05-07
 
 ### Added
