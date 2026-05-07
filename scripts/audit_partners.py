@@ -48,10 +48,14 @@ def _nested(data: dict, dotted: str) -> str | None:
     return str(cur) if cur else None
 
 
+def _expand_path(value: str) -> Path:
+    return Path(os.path.expandvars(value)).expanduser()
+
+
 def resolve_repo(cli_repo: str | None) -> Path:
     candidates: list[str] = []
     if cli_repo:
-        repo = Path(cli_repo).expanduser()
+        repo = _expand_path(cli_repo)
         if is_website_repo(repo):
             return repo
         sys.exit(f"Website repo not found at --repo: {repo}")
@@ -84,10 +88,8 @@ def resolve_repo(cli_repo: str | None) -> Path:
             if value:
                 candidates.append(value)
 
-    candidates.append(str(Path.home() / "lovstudio" / "coding" / "web"))
-
     for candidate in candidates:
-        repo = Path(candidate).expanduser()
+        repo = _expand_path(candidate)
         if is_website_repo(repo):
             return repo
 
@@ -100,7 +102,7 @@ def resolve_repo(cli_repo: str | None) -> Path:
 
 def resolve_partners_file(repo: Path, cli_partners_file: str | None) -> Path:
     def as_path(value: str) -> Path:
-        p = Path(value).expanduser()
+        p = _expand_path(value)
         return p if p.is_absolute() else repo / p
 
     if cli_partners_file:
@@ -187,7 +189,7 @@ def main():
     ap.add_argument(
         "--repo",
         default=None,
-        help="Website repo root. Defaults to LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT, profile JSON, legacy LOVSTUDIO_WEB_ROOT/PARTNERS_SITE_ROOT, or ~/lovstudio/coding/web if present.",
+        help="Website repo root. Defaults to LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT, profile JSON, or legacy LOVSTUDIO_WEB_ROOT/PARTNERS_SITE_ROOT.",
     )
     ap.add_argument(
         "--partners-file",

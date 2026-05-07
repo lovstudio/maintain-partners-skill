@@ -1,6 +1,6 @@
 # lovstudio:maintain-partners
 
-![Version](https://img.shields.io/badge/version-0.8.0-CC785C)
+![Version](https://img.shields.io/badge/version-0.9.0-CC785C)
 
 Maintain the LovStudio website's "Trusted By" partners section: collect brand
 logos through `lovstudio-find-logo`, normalize to the 80px canvas, append
@@ -22,8 +22,7 @@ brew install librsvg  # for SVG logo sources
 
 Set the website repo root with `--repo`, `LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT`, or the shared
 profile at `${LOVSTUDIO_SKILLS_PROFILE:-$HOME/.lovstudio/skills/profile.json}`.
-The Mark/LovStudio fallback is `$HOME/lovstudio/coding/web` only if that repo
-exists. `LOVSTUDIO_WEB_ROOT` and `PARTNERS_SITE_ROOT` remain accepted as legacy aliases.
+`LOVSTUDIO_WEB_ROOT` and `PARTNERS_SITE_ROOT` remain accepted as legacy aliases.
 
 Set the PARTNERS TSX file with `--partners-file`, `LOVSTUDIO_MAINTAIN_PARTNERS_FILE`, or profile
 keys. The default checks `app/(main)/(home)/PartnersGrid.tsx` first, then
@@ -35,15 +34,15 @@ Supported profile keys:
 ```json
 {
   "sites": {
-    "lovstudio_web": "$HOME/lovstudio/coding/web",
+    "lovstudio_web": "$HOME/projects/my-site",
     "partners_file": "app/(main)/(home)/PartnersGrid.tsx"
   },
   "lovstudio": {
-    "web_root": "$HOME/lovstudio/coding/web",
+    "web_root": "$HOME/projects/my-site",
     "partners_file": "app/(main)/(home)/PartnersGrid.tsx"
   },
   "workspace": {
-    "web_root": "$HOME/lovstudio/coding/web",
+    "web_root": "$HOME/projects/my-site",
     "partners_file": "app/(main)/(home)/PartnersGrid.tsx"
   }
 }
@@ -81,7 +80,7 @@ audit_partners.py   Walk PARTNERS; report missing logos / i18n keys / dead URLs
 ```bash
 # Collect a logo through the required find-logo skill
 SKILL_ROOT="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
-WEB_ROOT="${LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT:-$HOME/lovstudio/coding/web}"
+WEB_ROOT="${LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT:?Set this or pass --repo}"
 PARTNERS_TSX="${LOVSTUDIO_MAINTAIN_PARTNERS_FILE:-app/(main)/(home)/PartnersGrid.tsx}"
 
 python3 "$SKILL_ROOT/lovstudio-find-logo/scripts/find_logo.py" \

@@ -3,6 +3,14 @@
 All notable changes to this skill are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · Versioning: [SemVer](https://semver.org/)
 
+## [0.9.0] - 2026-05-07
+
+### Added
+
+- require explicit partner website config
+- remove implicit `$HOME/lovstudio/coding/web` fallback in favor of CLI, `LOVSTUDIO_*` env, or shared profile
+- expand `$HOME`-style variables from shared profile paths
+
 ## [0.8.0] - 2026-05-07
 
 ### Added

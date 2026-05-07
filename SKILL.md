@@ -25,21 +25,20 @@ compatibility: >
   (`brew install librsvg`) when the selected logo source is SVG.
   Tested on macOS; Linux should work. Website repo paths are configurable via
   --repo, LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT, or the shared user profile; this skill must not
-  require Mark's personal absolute path. Legacy LOVSTUDIO_* aliases remain
-  accepted for existing local setups.
+  require Mark's personal absolute path. Legacy path aliases remain accepted
+  for existing local setups.
 depends_on:
   - lovstudio-find-logo
 metadata:
   author: lovstudio
-  version: "0.8.0"
+  version: "0.9.0"
   tags: [lovstudio, web, branding, i18n]
 ---
 
 # maintain-partners — LovStudio 合作伙伴板块维护
 
-Maintains the configured website repo. For Mark's LovStudio setup this is
-usually `$HOME/lovstudio/coding/web`, but reusable runs should resolve the path
-from `--repo`, `LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT`, or the shared user profile. The partners
+Maintains the configured website repo. Resolve the path from `--repo`,
+`LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT`, or the shared user profile. The partners
 strip usually lives in `app/(main)/(home)/PartnersGrid.tsx` as a `PARTNERS:
 Partner[]` array; older sites may still keep it in
 `app/(main)/(home)/WorkshopDispatch.tsx`. Logos live in
@@ -52,7 +51,7 @@ Before touching files, resolve:
 
 ```bash
 SKILL_DIR="${SKILL_DIR:-$HOME/.claude/skills/lovstudio-maintain-partners}"
-WEB_ROOT="${LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT:-$HOME/lovstudio/coding/web}"
+WEB_ROOT="${LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT:?Set this or pass --repo}"
 PARTNERS_TSX="${LOVSTUDIO_MAINTAIN_PARTNERS_FILE:-app/(main)/(home)/PartnersGrid.tsx}"
 ```
 
@@ -62,7 +61,6 @@ Use this precedence for the website root:
 2. `LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT`.
 3. Shared profile JSON at
    `${LOVSTUDIO_SKILLS_PROFILE:-$HOME/.lovstudio/skills/profile.json}`.
-4. `$HOME/lovstudio/coding/web` only if that repo exists.
 
 `LOVSTUDIO_WEB_ROOT` and `PARTNERS_SITE_ROOT` are accepted as legacy aliases,
 but should not be the public contract for reusable skills.
@@ -164,8 +162,8 @@ Re-read after to verify.
 
 ### Op 3: Replace logo from a user-provided file
 
-User typically provides a path under `~/lovstudio/partners/<品牌>/<file>`.
-If the user has not configured that folder, ask for the file path directly.
+Ask for the source file path directly, or read it from the user's configured
+workspace/profile. Do not assume a private partners folder.
 
 ```bash
 python3 "$SKILL_DIR/scripts/normalize_logo.py" \
@@ -315,7 +313,7 @@ unstable—different displays / scaling will diverge again.
 ### add_partner.py
 | Flag | Notes |
 |---|---|
-| `--repo` | website repo root; defaults to `LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT`, profile JSON, legacy `LOVSTUDIO_WEB_ROOT` / `PARTNERS_SITE_ROOT`, or `$HOME/lovstudio/coding/web` if present |
+| `--repo` | website repo root; defaults to `LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT`, profile JSON, or legacy `LOVSTUDIO_WEB_ROOT` / `PARTNERS_SITE_ROOT` |
 | `--partners-file` | PARTNERS TSX file; defaults to `LOVSTUDIO_MAINTAIN_PARTNERS_FILE`, profile JSON, legacy `LOVSTUDIO_PARTNERS_FILE` / `PARTNERS_FILE`, PartnersGrid.tsx, or WorkshopDispatch.tsx |
 | `--name` | display name (CJK ok) |
 | `--href` | brand URL |
@@ -328,7 +326,7 @@ unstable—different displays / scaling will diverge again.
 ### audit_partners.py
 | Flag | Notes |
 |---|---|
-| `--repo` | website repo root; defaults to `LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT`, profile JSON, legacy `LOVSTUDIO_WEB_ROOT` / `PARTNERS_SITE_ROOT`, or `$HOME/lovstudio/coding/web` if present |
+| `--repo` | website repo root; defaults to `LOVSTUDIO_MAINTAIN_PARTNERS_SITE_ROOT`, profile JSON, or legacy `LOVSTUDIO_WEB_ROOT` / `PARTNERS_SITE_ROOT` |
 | `--partners-file` | PARTNERS TSX file; defaults to `LOVSTUDIO_MAINTAIN_PARTNERS_FILE`, profile JSON, legacy `LOVSTUDIO_PARTNERS_FILE` / `PARTNERS_FILE`, PartnersGrid.tsx, or WorkshopDispatch.tsx |
 | `--probe` | HTTP-probe every href (slow, needs proxy env vars) |
 
