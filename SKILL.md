@@ -29,13 +29,14 @@ compatibility: >
   for existing local setups.
 depends_on:
   - lov-find-logo
+  - lov-branding-consistency
 metadata:
   author: contributors
-  version: "0.10.0"
+  version: "0.10.1"
   tags: [skill-publisher, web, branding, i18n]
 ---
 
-# maintain-partners — Skill Publisher 合作伙伴板块维护
+# 伙伴名录 · Partner Directory
 
 Maintains the configured website repo. Resolve the path from `--repo`,
 `SKILL_MAINTAIN_PARTNERS_SITE_ROOT`, or the shared user profile. The partners
